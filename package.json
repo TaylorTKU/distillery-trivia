@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "private": true,
     "scripts": {
-        "build": "echo '--- BUILDING CLIENT ---' && cd client && npm install --no-audit --no-fund && npm run build && echo '--- BUILDING SERVER ---' && cd ../server && npm install --no-audit --no-fund && echo '--- GENERATING PRISMA ---' && npx prisma generate && echo '--- RUNNING MIGRATIONS ---' && npx prisma migrate deploy",
+        "build": "echo '--- BUILDING CLIENT ---' && cd client && npm install --include=dev --no-audit --no-fund && npm run build && echo '--- BUILDING SERVER ---' && cd ../server && npm install --include=dev --no-audit --no-fund && echo '--- GENERATING PRISMA ---' && npx prisma generate && echo '--- RUNNING MIGRATIONS ---' && npx prisma migrate deploy",
         "start": "cd server && npm start"
     }
 }
