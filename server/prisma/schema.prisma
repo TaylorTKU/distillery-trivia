@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Season {
+  id        String   @id @default(uuid())
+  name      String
+  startDate DateTime
+  endDate   DateTime?
+  isActive  Boolean  @default(true)
+  weeks     Week[]
+  createdAt DateTime @default(now())
+}
+
+model Week {
+  id         String   @id @default(uuid())
+  seasonId   String
+  season     Season   @relation(fields: [seasonId], references: [id])
+  weekNumber Int
+  date       DateTime @default(now())
+  isClosed   Boolean  @default(false)
+  rounds     Round[]
+  scores     Score[]
+  createdAt  DateTime @default(now())
+}
+
+model Team {
+  id           String   @id @default(uuid())
+  name         String
+  contactEmail String   @unique
+  isSeasonal   Boolean  @default(false)
+  magicLinkToken String?
+  players      Player[]
+  scores       Score[]
+  createdAt    DateTime @default(now())
+}
+
+model Player {
+  id     String @id @default(uuid())
+  teamId String
+  team   Team   @relation(fields: [teamId], references: [id])
+  name   String
+}
+
+model Round {
+  id          String   @id @default(uuid())
+  weekId      String
+  week        Week     @relation(fields: [weekId], references: [id])
+  roundNumber Int
+  maxPoints   Int      @default(10)
+  scores      Score[]
+}
+
+model Score {
+  id      String @id @default(uuid())
+  weekId  String
+  week    Week   @relation(fields: [weekId], references: [id])
+  teamId  String
+  team    Team   @relation(fields: [teamId], references: [id])
+  roundId String
+  round   Round  @relation(fields: [roundId], references: [id])
+  points  Int    @default(0)
+
+  @@unique([weekId, teamId, roundId])
+}
+
+model Admin {
+  id       String @id @default(uuid())
+  username String @unique
+  password String // Hashed
+}

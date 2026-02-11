@@ -1,0 +1,10 @@
+{
+    "name": "distillery-trivia-root",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "build": "cd client && npm install && npm run build && cd ../server && npm install && npx prisma generate",
+        "start": "cd server && npm start",
+        "render-postbuild": "cd server && npx prisma migrate deploy"
+    }
+}
