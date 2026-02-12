@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "private": true,
     "scripts": {
-        "build": "echo 'Checking Environment Variables...' && [ -n \"$DATABASE_URL\" ] && echo 'DEBUG: DATABASE_URL IS FOUND' || echo 'DEBUG: DATABASE_URL IS MISSING' && [ -n \"$DIRECT_URL\" ] && echo 'DEBUG: DIRECT_URL IS FOUND' || echo 'DEBUG: DIRECT_URL IS MISSING' && echo '--- BUILDING CLIENT ---' && cd client && npm install --include=dev --no-audit --no-fund && npm run build && echo '--- BUILDING SERVER ---' && cd ../server && npm install --include=dev --no-audit --no-fund && echo '--- GENERATING PRISMA ---' && npx prisma generate && echo '--- RUNNING MIGRATIONS ---' && npx prisma migrate deploy",
+        "build": "echo 'Checking Environment Variables...' && [ -n \"$DATABASE_URL\" ] && echo 'DEBUG: DATABASE_URL IS FOUND' || echo 'DEBUG: DATABASE_URL IS MISSING' && [ -n \"$DIRECT_URL\" ] && echo 'DEBUG: DIRECT_URL IS FOUND' || echo 'DEBUG: DIRECT_URL IS MISSING' && echo '--- BUILDING CLIENT ---' && cd client && npm install --include=dev --no-audit --no-fund && npm run build && echo '--- BUILDING SERVER ---' && cd ../server && npm install --include=dev --no-audit --no-fund && echo '--- GENERATING PRISMA ---' && npx prisma generate && echo '--- RUNNING MIGRATIONS ---' && npx prisma db push --accept-data-loss",
         "start": "cd server && npm start"
     }
 }
