@@ -11,22 +11,23 @@ A sleek, real-time trivia management system built for distilleries.
 
 ## Tech Stack
 - **Frontend**: React, Vite, CSS Variables (Custom Distillery Theme)
-- **Backend**: Node.js, Express, Socket.io
-- **Database**: SQLite (via Prisma)
+- **Backend**: Node.js, Express (v5), Socket.io
+- **Database**: PostgreSQL (via Supabase & Prisma)
 - **Auth**: JWT-based secure access for Host/Admin.
 
 ## Setup Instructions
 
 ### 1. Prerequisites
-- Node.js (v18+)
+- Node.js (v20+)
 - npm
+- Supabase Account (for Production)
 
-### 2. Backend Setup
+### 2. Local Setup
 ```bash
 cd server
 npm install
-npx prisma migrate dev --name init
-npm run seed  # Optional: Adds initial test data
+# For local dev, you can still use SQLite by changing provider to "sqlite" in schema.prisma
+# Or connect to a local Postgres instance
 npm start
 ```
 
@@ -38,18 +39,18 @@ npm run dev
 ```
 
 ### 4. Admin Access
-- **Host/Admin URL**: `http://localhost:5173/host` or `http://localhost:5173/admin`
-- **Default Password**: `distillery_trivia_2024` (Change in `server/.env`)
+- **Host Dashboard**: `/host`
+- **Admin Panel**: `/admin`
+- **Default Password**: (Set via `ADMIN_PASSWORD` env var)
 
-## Deployment
-### Environment Variables
-Create a `.env` file in the `server` directory:
-```env
-DATABASE_URL="file:./dev.db"
-ADMIN_PASSWORD="your_secure_password"
-JWT_SECRET="your_jwt_secret"
-PORT=3001
-```
+## Deployment (Render)
+1. **Database**: Create a project on [Supabase](https://supabase.com).
+2. **Environment Variables**:
+   - `DATABASE_URL`: Transaction Pooler URI (port 6543) + `?pgbouncer=true`
+   - `DIRECT_URL`: Direct/Session URI (port 5432)
+   - `ADMIN_PASSWORD`: Your secret password
+   - `JWT_SECRET`: Random string for security
+   - `NODE_ENV`: `production`
 
 ### Iframe Embed Code
 To embed the live display on your website:
