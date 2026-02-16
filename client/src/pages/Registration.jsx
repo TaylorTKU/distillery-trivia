@@ -7,20 +7,20 @@ const Registration = () => {
         name: '',
         contactEmail: '',
         isSeasonal: false,
-        players: ['']
+        players: [{ name: '', email: '', phone: '' }]
     });
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
 
     const handleAddPlayer = () => {
         if (formData.players.length < 6) {
-            setFormData({ ...formData, players: [...formData.players, ''] });
+            setFormData({ ...formData, players: [...formData.players, { name: '', email: '', phone: '' }] });
         }
     };
 
-    const handlePlayerChange = (index, value) => {
+    const handlePlayerChange = (index, field, value) => {
         const newPlayers = [...formData.players];
-        newPlayers[index] = value;
+        newPlayers[index][field] = value;
         setFormData({ ...formData, players: newPlayers });
     };
 
@@ -28,10 +28,9 @@ const Registration = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            const filteredPlayers = formData.players.filter(p => p.trim() !== '');
-            await axios.post('http://localhost:3001/api/teams/register', {
+            await axios.post('/api/teams/register', {
                 ...formData,
-                players: filteredPlayers
+                players: formData.players.filter(p => p.name.trim() !== '')
             });
             setSuccess(true);
         } catch (error) {
@@ -81,17 +80,32 @@ const Registration = () => {
                     </div>
 
                     <div style={{ marginBottom: '1.5rem' }}>
-                        <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)' }}>Players (1-6)</label>
+                        <label style={{ display: 'block', marginBottom: '1rem', color: 'var(--text-muted)' }}>Players (1-6)</label>
                         {formData.players.map((player, index) => (
-                            <input
-                                key={index}
-                                type="text"
-                                placeholder={`Player ${index + 1}`}
-                                value={player}
-                                onChange={(e) => handlePlayerChange(index, e.target.value)}
-                                style={{ marginBottom: '0.5rem' }}
-                                required={index === 0}
-                            />
+                            <div key={index} className="player-input-group" style={{ marginBottom: '1.5rem', borderLeft: '2px solid var(--primary)', paddingLeft: '1rem' }}>
+                                <input
+                                    type="text"
+                                    placeholder={`Player ${index + 1} Name`}
+                                    value={player.name}
+                                    onChange={(e) => handlePlayerChange(index, 'name', e.target.value)}
+                                    style={{ marginBottom: '0.5rem' }}
+                                    required={index === 0}
+                                />
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+                                    <input
+                                        type="email"
+                                        placeholder="Email (Optional)"
+                                        value={player.email}
+                                        onChange={(e) => handlePlayerChange(index, 'email', e.target.value)}
+                                    />
+                                    <input
+                                        type="tel"
+                                        placeholder="Phone (Optional)"
+                                        value={player.phone}
+                                        onChange={(e) => handlePlayerChange(index, 'phone', e.target.value)}
+                                    />
+                                </div>
+                            </div>
                         ))}
                         {formData.players.length < 6 && (
                             <Button variant="ghost" type="button" onClick={handleAddPlayer} style={{ padding: '0.5rem', fontSize: '0.9rem' }}>

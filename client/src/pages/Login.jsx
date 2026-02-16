@@ -9,7 +9,7 @@ const Login = ({ onLogin }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const resp = await axios.post('http://localhost:3001/api/auth/login', { password });
+            const resp = await axios.post('/api/auth/login', { password });
             localStorage.setItem('trivia_token', resp.data.token);
             onLogin(resp.data.token);
         } catch (err) {

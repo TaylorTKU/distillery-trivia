@@ -12,14 +12,14 @@ const HostDashboard = () => {
 
     const fetchSession = async () => {
         try {
-            const seasons = await axios.get('http://localhost:3001/api/seasons');
+            const seasons = await axios.get('/api/seasons');
             const activeSeason = seasons.data.find(s => s.isActive);
             if (activeSeason && activeSeason.weeks.length > 0) {
                 const latestWeek = activeSeason.weeks[activeSeason.weeks.length - 1];
                 setActiveWeek(latestWeek);
-                const teamsResp = await axios.get('http://localhost:3001/api/teams');
+                const teamsResp = await axios.get('/api/teams');
                 setTeams(teamsResp.data);
-                const scoresResp = await axios.get(`http://localhost:3001/api/scores/week/${latestWeek.id}`);
+                const scoresResp = await axios.get(`/api/scores/week/${latestWeek.id}`);
                 const scoreMap = {};
                 scoresResp.data.forEach(s => {
                     scoreMap[`${s.teamId}_${s.roundId}`] = s.points;
@@ -39,7 +39,7 @@ const HostDashboard = () => {
         const val = parseInt(points) || 0;
         setScores({ ...scores, [`${teamId}_${roundId}`]: val });
         try {
-            await axios.post('http://localhost:3001/api/scores',
+            await axios.post('/api/scores',
                 { weekId: activeWeek.id, teamId, roundId, points: val },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -51,7 +51,7 @@ const HostDashboard = () => {
     const handlePublish = async () => {
         setPublishing(true);
         try {
-            await axios.post(`http://localhost:3001/api/scores/week/${activeWeek.id}/publish`, {}, {
+            await axios.post(`/api/scores/week/${activeWeek.id}/publish`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             alert('Scores published to live display!');

@@ -14,7 +14,11 @@ router.post('/register', async (req, res) => {
                 contactEmail,
                 isSeasonal: !!isSeasonal,
                 players: {
-                    create: players.map(p => ({ name: p }))
+                    create: players.map(p => ({
+                        name: p.name,
+                        email: p.email || null,
+                        phone: p.phone || null
+                    }))
                 }
             },
             include: { players: true }

@@ -2,13 +2,16 @@ import React from 'react';
 
 const Button = ({ children, onClick, type = 'button', variant = 'primary', className = '', ...props }) => {
     const baseStyle = {
-        padding: '0.75rem 1.5rem',
-        borderRadius: '8px',
-        fontWeight: '600',
-        fontSize: '1rem',
+        padding: '0.8rem 2rem',
+        borderRadius: '50px',
+        fontWeight: '500',
+        fontSize: '0.85rem',
+        textTransform: 'uppercase',
+        letterSpacing: '1px',
         border: 'none',
         width: '100%',
-        cursor: 'pointer'
+        cursor: 'pointer',
+        transition: 'all 0.3s ease'
     };
 
     const variants = {

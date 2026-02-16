@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { io } from 'socket.io-client';
 
-const socket = io('http://localhost:3001');
+const socket = io();
 
 const LiveDisplay = () => {
     const [scores, setScores] = useState([]);
@@ -11,7 +11,7 @@ const LiveDisplay = () => {
 
     const fetchScores = async (weekId) => {
         try {
-            const resp = await axios.get(`http://localhost:3001/api/scores/week/${weekId}`);
+            const resp = await axios.get(`/api/scores/week/${weekId}`);
             setScores(resp.data);
         } catch (err) {
             console.error(err);
@@ -22,7 +22,7 @@ const LiveDisplay = () => {
         // Initial fetch for the "latest" week (for simplicity, we'll get the active season's weeks)
         const init = async () => {
             try {
-                const seasons = await axios.get('http://localhost:3001/api/seasons');
+                const seasons = await axios.get('/api/seasons');
                 const activeSeason = seasons.data.find(s => s.isActive);
                 if (activeSeason && activeSeason.weeks.length > 0) {
                     const latestWeek = activeSeason.weeks[activeSeason.weeks.length - 1];

@@ -14,7 +14,7 @@ const AdminPanel = () => {
 
     const fetchData = async () => {
         try {
-            const resp = await axios.get('http://localhost:3001/api/seasons');
+            const resp = await axios.get('/api/seasons');
             setSeasons(resp.data);
             if (resp.data.length > 0) setSelectedSeason(resp.data.find(s => s.isActive) || resp.data[0]);
         } catch (err) {
@@ -29,7 +29,7 @@ const AdminPanel = () => {
     const handleCreateSeason = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:3001/api/seasons', newSeason, {
+            await axios.post('/api/seasons', newSeason, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             fetchData();
@@ -41,13 +41,13 @@ const AdminPanel = () => {
 
     const handleAddWeek = async () => {
         try {
-            const weekResp = await axios.post('http://localhost:3001/api/weeks',
+            const weekResp = await axios.post('/api/weeks',
                 { seasonId: selectedSeason.id, weekNumber },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             // Create 5 rounds by default
             for (let i = 1; i <= 5; i++) {
-                await axios.post(`http://localhost:3001/api/weeks/${weekResp.data.id}/rounds`,
+                await axios.post(`/api/weeks/${weekResp.data.id}/rounds`,
                     { roundNumber: i, maxPoints: 10 },
                     { headers: { Authorization: `Bearer ${token}` } }
                 );
@@ -61,7 +61,7 @@ const AdminPanel = () => {
 
     const handleActivate = async (id) => {
         try {
-            await axios.put(`http://localhost:3001/api/seasons/${id}/activate`, {}, {
+            await axios.put(`/api/seasons/${id}/activate`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             fetchData();
