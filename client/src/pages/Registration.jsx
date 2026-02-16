@@ -26,11 +26,22 @@ const Registration = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Validate player contact info
+        const activePlayers = formData.players.filter(p => p.name.trim() !== '');
+
+        for (const player of activePlayers) {
+            if (!player.email.trim() && !player.phone.trim()) {
+                alert(`Please provide either an email or a phone number for ${player.name}.`);
+                return;
+            }
+        }
+
         setLoading(true);
         try {
             await axios.post('/api/teams/register', {
                 ...formData,
-                players: formData.players.filter(p => p.name.trim() !== '')
+                players: activePlayers
             });
             setSuccess(true);
         } catch (error) {
@@ -94,17 +105,20 @@ const Registration = () => {
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
                                     <input
                                         type="email"
-                                        placeholder="Email (Optional)"
+                                        placeholder="Email Address"
                                         value={player.email}
                                         onChange={(e) => handlePlayerChange(index, 'email', e.target.value)}
                                     />
                                     <input
                                         type="tel"
-                                        placeholder="Phone (Optional)"
+                                        placeholder="Phone Number"
                                         value={player.phone}
                                         onChange={(e) => handlePlayerChange(index, 'phone', e.target.value)}
                                     />
                                 </div>
+                                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.4rem' }}>
+                                    * At least one contact method is required.
+                                </p>
                             </div>
                         ))}
                         {formData.players.length < 6 && (
