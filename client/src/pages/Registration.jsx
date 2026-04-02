@@ -30,7 +30,14 @@ const Registration = () => {
         // Validate player contact info
         const activePlayers = formData.players.filter(p => p.name.trim() !== '');
 
-        for (const player of activePlayers) {
+        for (let i = 0; i < activePlayers.length; i++) {
+            const player = activePlayers[i];
+            
+            // Auto-fill Player 1's email with the team contact email if left blank
+            if (i === 0 && !player.email.trim() && !player.phone.trim() && formData.contactEmail) {
+                player.email = formData.contactEmail;
+            }
+
             if (!player.email.trim() && !player.phone.trim()) {
                 alert(`Please provide either an email or a phone number for ${player.name}.`);
                 return;
