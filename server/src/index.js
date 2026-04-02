@@ -49,15 +49,16 @@ app.get('/health', (req, res) => {
     res.json({ status: 'ok', time: new Date() });
 });
 
-// Production: Serve static files from the 'public' directory
-if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, '../public')));
+// Serve static files from the 'public' directory
+app.use(express.static(path.join(__dirname, '../public')));
 
-    // The catch-all route: for any request that doesn't match an API route, send back index.html
-    app.get(/.*/, (req, res) => {
-        res.sendFile(path.join(__dirname, '../public', 'index.html'));
-    });
-}
+// The catch-all route: for any request that doesn't match an API route, send back index.html
+app.use((req, res, next) => {
+    if (req.method === 'GET' && !req.path.startsWith('/api/') && !req.path.startsWith('/socket.io/')) {
+        return res.sendFile(path.join(__dirname, '../public', 'index.html'));
+    }
+    next();
+});
 
 const PORT = process.env.PORT || 10000;
 server.listen(PORT, '0.0.0.0', () => {
