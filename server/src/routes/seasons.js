@@ -7,7 +7,11 @@ const { adminAuth } = require('../middleware/auth');
 router.get('/', async (req, res) => {
     try {
         const seasons = await prisma.season.findMany({
-            include: { weeks: true },
+            include: { 
+                weeks: {
+                    include: { rounds: { orderBy: { roundNumber: 'asc' } } }
+                } 
+            },
             orderBy: { createdAt: 'desc' }
         });
         res.json(seasons);
