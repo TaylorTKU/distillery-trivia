@@ -148,9 +148,10 @@ const Registration = () => {
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
                                     <input
                                         type="email"
-                                        placeholder="Email (Optional)"
+                                        placeholder="Email (Required)"
                                         value={player.email}
                                         onChange={(e) => handlePlayerChange(index, 'email', e.target.value)}
+                                        required={!!player.name.trim()}
                                     />
                                     <input
                                         type="tel"
