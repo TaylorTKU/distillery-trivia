@@ -7,6 +7,7 @@ import Login from './Login';
 const AdminPanel = () => {
     const [token, setToken] = useState(localStorage.getItem('trivia_token'));
     const [seasons, setSeasons] = useState([]);
+    const [teams, setTeams] = useState([]);
     const [newSeason, setNewSeason] = useState({ name: '', startDate: '' });
     const [selectedSeason, setSelectedSeason] = useState(null);
     const [weekNumber, setWeekNumber] = useState(1);
@@ -14,9 +15,13 @@ const AdminPanel = () => {
 
     const fetchData = async () => {
         try {
-            const resp = await axios.get('/api/seasons');
-            setSeasons(resp.data);
-            if (resp.data.length > 0) setSelectedSeason(resp.data.find(s => s.isActive) || resp.data[0]);
+            const [seasonsResp, teamsResp] = await Promise.all([
+                axios.get('/api/seasons'),
+                axios.get('/api/teams')
+            ]);
+            setSeasons(seasonsResp.data);
+            setTeams(teamsResp.data);
+            if (seasonsResp.data.length > 0) setSelectedSeason(seasonsResp.data.find(s => s.isActive) || seasonsResp.data[0]);
         } catch (err) {
             console.error(err);
         }
@@ -67,6 +72,19 @@ const AdminPanel = () => {
             fetchData();
         } catch (err) {
             alert('Failed to activate season');
+        }
+    };
+
+    const handleDeleteTeam = async (id, name) => {
+        if (!window.confirm(`Are you sure you want to permanently delete team: ${name}?`)) return;
+        
+        try {
+            await axios.delete(`/api/teams/${id}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            fetchData();
+        } catch (err) {
+            alert('Failed to delete team');
         }
     };
 
@@ -152,6 +170,39 @@ const AdminPanel = () => {
                     )}
                 </div>
 
+            </div>
+
+            {/* Team Management */}
+            <div className="glass-card" style={{ marginTop: '2rem', overflowX: 'auto' }}>
+                <h2>Team Management</h2>
+                <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '1.5rem' }}>
+                    <thead>
+                        <tr style={{ borderBottom: '1px solid var(--primary)', textAlign: 'left' }}>
+                            <th style={{ padding: '1rem' }}>Team Name</th>
+                            <th style={{ padding: '1rem' }}>Contact Email</th>
+                            <th style={{ padding: '1rem', textAlign: 'center' }}>Players</th>
+                            <th style={{ padding: '1rem', textAlign: 'right' }}>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {teams.map(team => (
+                            <tr key={team.id} style={{ borderBottom: '1px solid var(--glass-border)' }}>
+                                <td style={{ padding: '1rem', fontWeight: 600 }}>{team.name}</td>
+                                <td style={{ padding: '1rem', color: 'var(--text-muted)' }}>{team.contactEmail}</td>
+                                <td style={{ padding: '1rem', textAlign: 'center' }}>{team.players?.length || 0}</td>
+                                <td style={{ padding: '1rem', textAlign: 'right' }}>
+                                    <Button 
+                                        variant="outline" 
+                                        onClick={() => handleDeleteTeam(team.id, team.name)}
+                                        style={{ padding: '0.4rem 0.8rem', width: 'auto', borderColor: '#cc4444', color: '#ff7777' }}
+                                    >
+                                        Delete
+                                    </Button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
         </div>
     );

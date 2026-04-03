@@ -54,4 +54,24 @@ router.get('/:id', async (req, res) => {
     }
 });
 
+const { adminAuth } = require('../middleware/auth');
+
+// Delete team (Admin)
+router.delete('/:id', adminAuth, async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        // Delete related records first to avoid foreign key constraints
+        await prisma.score.deleteMany({ where: { teamId: id } });
+        await prisma.player.deleteMany({ where: { teamId: id } });
+        
+        // Delete the team
+        await prisma.team.delete({ where: { id } });
+        
+        res.json({ message: 'Team deleted successfully' });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
 module.exports = router;
