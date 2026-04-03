@@ -5,7 +5,6 @@ import Button from '../components/Button';
 const Registration = () => {
     const [formData, setFormData] = useState({
         teamName: '',
-        isSeasonal: false,
         captainName: '',
         captainEmail: '',
         captainPhone: '',
@@ -53,7 +52,7 @@ const Registration = () => {
             await axios.post('/api/teams/register', {
                 name: formData.teamName,
                 contactEmail: formData.captainEmail, // Captain is the contact
-                isSeasonal: formData.isSeasonal,
+                isSeasonal: true,
                 players: mappedPlayers
             });
             setSuccess(true);
@@ -85,7 +84,7 @@ const Registration = () => {
                     {/* Team Info Section */}
                     <div style={{ marginBottom: '2rem', paddingBottom: '1.5rem', borderBottom: '1px solid var(--glass-border)' }}>
                         <h3 style={{ marginBottom: '1rem', color: 'var(--accent)' }}>Team Info</h3>
-                        <div style={{ marginBottom: '1.25rem' }}>
+                        <div style={{ marginBottom: '0.5rem' }}>
                             <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)' }}>Team Name</label>
                             <input
                                 type="text"
@@ -94,15 +93,6 @@ const Registration = () => {
                                 onChange={(e) => setFormData({ ...formData, teamName: e.target.value })}
                                 placeholder="The Thirsty Thinkers"
                             />
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <input
-                                type="checkbox"
-                                style={{ width: 'auto' }}
-                                checked={formData.isSeasonal}
-                                onChange={(e) => setFormData({ ...formData, isSeasonal: e.target.checked })}
-                            />
-                            <label style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Count towards seasonal leaderboard</label>
                         </div>
                     </div>
 
@@ -138,10 +128,13 @@ const Registration = () => {
 
                     {/* Additional Players */}
                     <div style={{ marginBottom: '2rem' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
                             <h3 style={{ color: 'var(--accent)', margin: 0 }}>Roster</h3>
                             <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>Up to 8 total</span>
                         </div>
+                        <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '1.5rem', fontStyle: 'italic' }}>
+                            * Note: Each team member must be registered here on the roster to receive the end of season prize!
+                        </p>
                         
                         {formData.additionalPlayers.map((player, index) => (
                             <div key={index} className="player-input-group" style={{ marginBottom: '1.5rem', borderLeft: '2px solid var(--primary)', paddingLeft: '1rem' }}>
