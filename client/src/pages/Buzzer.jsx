@@ -115,34 +115,50 @@ const Buzzer = () => {
     }
 
     return (
-        <div style={{ height: '100dvh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        <div style={{ height: '100dvh', display: 'flex', flexDirection: 'column', overflow: 'hidden', backgroundColor: 'var(--background)' }}>
+            
+            {/* Header */}
             <div style={{ padding: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 10 }}>
                 <div style={{ fontWeight: 'bold' }}>{selectedTeam.name}</div>
                 <button onClick={() => setSelectedTeam(null)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', textDecoration: 'underline', cursor: 'pointer' }}>Switch Team</button>
             </div>
             
-            <button 
-                onClick={handleBuzz}
-                disabled={!buzzerState.isOpen}
-                style={{
-                    flex: 1,
-                    width: '100%',
-                    border: 'none',
-                    backgroundColor: bgColor,
-                    color: textColor,
-                    fontSize: buzzerState.winner && buzzerState.winner.id !== selectedTeam.id ? '2rem' : '4rem',
-                    fontWeight: '900',
-                    transition: 'all 0.1s',
-                    cursor: buzzerState.isOpen ? 'pointer' : 'not-allowed',
-                    borderTop: `10px solid ${borderColor}`,
-                    borderBottom: `10px solid ${borderColor}`,
-                    textTransform: 'uppercase',
-                    wordBreak: 'break-word',
-                    padding: '2rem'
-                }}
-            >
-                {msg}
-            </button>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
+                
+                {/* Branding */}
+                <img src="/logo.png" alt="Cultivated Cocktails" style={{ maxHeight: '100px', marginBottom: '3rem', opacity: 0.8 }} />
+
+                {/* The Buzzer */}
+                <button 
+                    onClick={handleBuzz}
+                    disabled={!buzzerState.isOpen}
+                    style={{
+                        width: '320px',
+                        height: '320px',
+                        borderRadius: '50%',
+                        border: 'none',
+                        backgroundColor: bgColor,
+                        color: textColor,
+                        fontSize: buzzerState.winner && buzzerState.winner.id !== selectedTeam.id ? '1.5rem' : '3rem',
+                        fontWeight: '900',
+                        transition: 'all 0.1s',
+                        cursor: buzzerState.isOpen ? 'pointer' : 'not-allowed',
+                        borderBottom: buzzerState.isOpen ? `20px solid ${borderColor}` : `10px solid ${borderColor}`,
+                        boxShadow: buzzerState.isOpen ? `0 20px 40px rgba(0,0,0,0.5), inset 0 10px 10px rgba(255,255,255,0.2)` : `0 10px 20px rgba(0,0,0,0.5), inset 0 5px 5px rgba(255,255,255,0.1)`,
+                        transform: buzzerState.isOpen ? 'translateY(-10px)' : 'translateY(0)',
+                        textTransform: 'uppercase',
+                        wordBreak: 'break-word',
+                        padding: '1rem',
+                        userSelect: 'none'
+                    }}
+                    onMouseDown={(e) => { if(buzzerState.isOpen) e.currentTarget.style.transform = 'translateY(10px)'; }}
+                    onMouseUp={(e) => { if(buzzerState.isOpen) e.currentTarget.style.transform = 'translateY(-10px)'; }}
+                    onTouchStart={(e) => { if(buzzerState.isOpen) e.currentTarget.style.transform = 'translateY(10px)'; }}
+                    onTouchEnd={(e) => { if(buzzerState.isOpen) e.currentTarget.style.transform = 'translateY(-10px)'; }}
+                >
+                    {msg}
+                </button>
+            </div>
         </div>
     );
 };
