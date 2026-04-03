@@ -49,13 +49,13 @@ const Registration = () => {
 
         setLoading(true);
         try {
-            await axios.post('/api/teams/register', {
+            const resp = await axios.post('/api/teams/register', {
                 name: formData.teamName,
                 contactEmail: formData.captainEmail, // Captain is the contact
                 isSeasonal: true,
                 players: mappedPlayers
             });
-            setSuccess(true);
+            setSuccess(resp.data.team);
         } catch (error) {
             alert('Registration failed: ' + (error.response?.data?.error || error.message));
         } finally {
@@ -65,11 +65,16 @@ const Registration = () => {
 
     if (success) {
         return (
-            <div className="container">
-                <div className="glass-card" style={{ textAlign: 'center' }}>
-                    <h2>Cheers! 🥃</h2>
-                    <p style={{ margin: '1rem 0' }}>Your team <strong>{formData.teamName}</strong> is registered.</p>
-                    <p>You can now see your scores on the live board.</p>
+            <div className="container" style={{ marginTop: '10vh' }}>
+                <div className="glass-card" style={{ textAlign: 'center', padding: '3rem' }}>
+                    <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>Cheers! 🥃</h2>
+                    <p style={{ margin: '1rem 0', fontSize: '1.2rem' }}>Your team <strong>{success.name || formData.teamName}</strong> is registered.</p>
+                    
+                    <div style={{ marginTop: '3rem' }}>
+                        <Button onClick={() => window.location.href = `/buzzer?teamId=${success.id}`} style={{ padding: '1rem 2rem', fontSize: '1.2rem', backgroundColor: '#2ecc71', color: 'white' }}>
+                            Open Team Buzzer 🔴
+                        </Button>
+                    </div>
                 </div>
             </div>
         );

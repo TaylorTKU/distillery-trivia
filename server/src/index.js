@@ -17,6 +17,11 @@ const io = new Server(server, {
 app.use(cors());
 app.use(express.json());
 
+let buzzerState = {
+    isOpen: false,
+    winner: null
+};
+
 // Socket.io connection logic
 io.on('connection', (socket) => {
     console.log('A user connected:', socket.id);
@@ -24,6 +29,28 @@ io.on('connection', (socket) => {
     socket.on('join_room', (room) => {
         socket.join(room);
         console.log(`User ${socket.id} joined room: ${room}`);
+    });
+
+    // Buzzer Events
+    socket.on('get_buzzer_status', () => {
+        socket.emit('buzzer_status', buzzerState);
+    });
+
+    socket.on('host_unlock_buzzer', () => {
+        buzzerState = { isOpen: true, winner: null };
+        io.emit('buzzer_status', buzzerState);
+    });
+
+    socket.on('host_clear_buzzer', () => {
+        buzzerState = { isOpen: false, winner: null };
+        io.emit('buzzer_status', buzzerState);
+    });
+
+    socket.on('team_buzz', (team) => {
+        if (buzzerState.isOpen && buzzerState.winner === null) {
+            buzzerState = { isOpen: false, winner: team };
+            io.emit('buzzer_status', buzzerState);
+        }
     });
 
     socket.on('disconnect', () => {

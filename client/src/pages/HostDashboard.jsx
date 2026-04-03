@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { io } from 'socket.io-client';
 import Button from '../components/Button';
 import Login from './Login';
+
+const socket = io();
 
 const HostDashboard = () => {
     const [token, setToken] = useState(localStorage.getItem('trivia_token'));
@@ -9,6 +12,7 @@ const HostDashboard = () => {
     const [teams, setTeams] = useState([]);
     const [scores, setScores] = useState({}); // { teamId_roundId: points }
     const [publishing, setPublishing] = useState(false);
+    const [buzzerState, setBuzzerState] = useState({ isOpen: false, winner: null });
 
     const fetchSession = async () => {
         try {
@@ -33,7 +37,19 @@ const HostDashboard = () => {
 
     useEffect(() => {
         if (token) fetchSession();
+
+        // Buzzer socket logic
+        socket.emit('get_buzzer_status');
+        const handleBuzzer = (state) => setBuzzerState(state);
+        socket.on('buzzer_status', handleBuzzer);
+
+        return () => {
+            socket.off('buzzer_status', handleBuzzer);
+        };
     }, [token]);
+
+    const handleUnlockBuzzer = () => socket.emit('host_unlock_buzzer');
+    const handleClearBuzzer = () => socket.emit('host_clear_buzzer');
 
     const handleScoreChange = async (teamId, roundId, points) => {
         const val = parseInt(points) || 0;
@@ -74,6 +90,39 @@ const HostDashboard = () => {
                         {publishing ? 'Publishing...' : 'Publish Scores'}
                     </Button>
                     <Button variant="ghost" onClick={() => { localStorage.removeItem('trivia_token'); setToken(null); }}>Logout</Button>
+                </div>
+            </div>
+
+            {/* Buzzer Controls */}
+            <div className="glass-card" style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderLeft: buzzerState.winner ? '4px solid var(--accent)' : '4px solid transparent' }}>
+                <div>
+                    <h2 style={{ marginBottom: '0.5rem' }}>Buzzer Room</h2>
+                    {buzzerState.winner ? (
+                        <div style={{ color: 'var(--accent)', fontSize: '1.2rem', fontWeight: 'bold' }}>
+                            🎉 {buzzerState.winner.name} buzzed in!
+                        </div>
+                    ) : (
+                        <div style={{ color: buzzerState.isOpen ? '#2ecc71' : 'var(--text-muted)' }}>
+                            Status: {buzzerState.isOpen ? '🔓 Buzzers Open' : '🔒 Locked'}
+                        </div>
+                    )}
+                </div>
+                <div style={{ display: 'flex', gap: '1rem' }}>
+                    <Button 
+                        onClick={handleUnlockBuzzer} 
+                        disabled={buzzerState.isOpen && !buzzerState.winner}
+                        style={{ backgroundColor: '#2ecc71', color: 'white', borderColor: '#27ae60' }}
+                    >
+                        Unlock Buzzers
+                    </Button>
+                    <Button 
+                        variant="outline" 
+                        onClick={handleClearBuzzer} 
+                        disabled={!buzzerState.isOpen && !buzzerState.winner}
+                        style={{ borderColor: '#e74c3c', color: '#ff7777' }}
+                    >
+                        Lock / Clear
+                    </Button>
                 </div>
             </div>
 

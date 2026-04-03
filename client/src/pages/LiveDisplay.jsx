@@ -8,6 +8,7 @@ const LiveDisplay = () => {
     const [scores, setScores] = useState([]);
     const [activeWeek, setActiveWeek] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [buzzerWinner, setBuzzerWinner] = useState(null);
 
     const fetchScores = async (weekId) => {
         try {
@@ -48,9 +49,15 @@ const LiveDisplay = () => {
             if (activeWeek) fetchScores(activeWeek.id);
         });
 
+        // Buzzer listener
+        socket.emit('get_buzzer_status');
+        const handleBuzzer = (state) => setBuzzerWinner(state.winner);
+        socket.on('buzzer_status', handleBuzzer);
+
         return () => {
             socket.off('score_updated');
             socket.off('scores_published');
+            socket.off('buzzer_status', handleBuzzer);
         };
     }, [activeWeek]);
 
@@ -68,7 +75,17 @@ const LiveDisplay = () => {
     if (loading) return <div className="container"><h1>Loading Scores...</h1></div>;
 
     return (
-        <div style={{ padding: '3rem', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div style={{ padding: '3rem', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
+            
+            {buzzerWinner && (
+                <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(26, 26, 26, 0.95)', zIndex: 1000, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', animation: 'pulse 1s infinite alternate' }}>
+                    <h2 style={{ fontSize: '3rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>BUZZED IN:</h2>
+                    <h1 style={{ fontSize: '8rem', color: 'var(--accent)', textAlign: 'center', textTransform: 'uppercase', textShadow: '0 0 20px rgba(193, 139, 92, 0.5)', padding: '0 2rem' }}>
+                        {buzzerWinner.name}
+                    </h1>
+                </div>
+            )}
+
             <h1 style={{ fontSize: '4rem', marginBottom: '2rem', textTransform: 'uppercase', letterSpacing: '4px' }}>
                 Live Standings
             </h1>

@@ -6,6 +6,7 @@ import Registration from './pages/Registration';
 import LiveDisplay from './pages/LiveDisplay';
 import HostDashboard from './pages/HostDashboard';
 import AdminPanel from './pages/AdminPanel';
+import Buzzer from './pages/Buzzer';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path="/live" element={<LiveDisplay />} />
           <Route path="/host" element={<HostDashboard />} />
           <Route path="/admin" element={<AdminPanel />} />
+          <Route path="/buzzer" element={<Buzzer />} />
         </Routes>
       </div>
     </Router>
